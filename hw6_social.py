@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from pandas.core.frame import DataFrame
 import hw6_social_tests as test
 
 project = "Social" # don't edit this
@@ -25,7 +26,8 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    df=pd.read_csv(filename)
+    return df
 
 
 '''
@@ -35,7 +37,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    for i in fromString.split("\n"):
+        fromto=i.find(" ")
+        str=fromString[fromto:]
+        bracket=str.find("(")
+        str=str[:bracket]
+    return str.strip()
 
 
 '''
@@ -45,7 +52,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    str=""
+    for i in fromString.split():
+        bracket=(i.find("("))
+        if bracket==0:
+            str=i.replace("(","")
+    return str
 
 
 '''
@@ -55,7 +67,14 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    str=""
+    for i in fromString.split("\n"):
+        fromto=i.find("from")
+        str=fromString[fromto:]
+        str=str.replace(")","")
+        str=str.replace("from ","")
+    return str
+    
 
 
 '''
@@ -65,7 +84,20 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    # endChars = [ " ", "\n", "#", ".", ",", "?", "!", ":", ";", ")" ]
+    lst=[]
+    k="" 
+    words=message.split("#") 
+    for i in words[1:len(words)]:
+        for j in i: 
+            if j not in endChars: 
+                k+=j 
+            else: 
+                break 
+        k='#'+k 
+        lst.append(k) 
+        k="" 
+    return lst
 
 
 '''
@@ -75,7 +107,8 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    df=stateDf.loc[stateDf["state"]==state,"region"]
+    return df.values[0]
 
 
 '''
@@ -85,6 +118,29 @@ Parameters: dataframe ; dataframe
 Returns: None
 '''
 def addColumns(data, stateDf):
+    name=[]
+    position=[]
+    state=[]
+    region=[]
+    hashtags=[]
+    for index, row in data.iterrows():
+        col_value=data['label'].iloc[index]
+        names=parseName(col_value)
+        positions=parsePosition(col_value)
+        states=parseState(col_value)
+        regions=getRegionFromState(stateDf, states)
+        txt_value=data['text'].iloc[index]
+        hashtag=findHashtags(txt_value)
+        name.append(names)
+        position.append(positions)
+        state.append(states)
+        region.append(regions)
+        hashtags.append(hashtag)
+    data['name']=name
+    data['position']=position
+    data['state']=state
+    data['region']=region
+    data['hashtags']=hashtags
     return
 
 
@@ -98,7 +154,12 @@ Returns: str
 '''
 def findSentiment(classifier, message):
     score = classifier.polarity_scores(message)['compound']
-    return
+    if score<-0.1:
+        return "negative"
+    elif score>0.1:
+        return "positive"
+    else:
+        return "neutral"
 
 
 '''
@@ -109,6 +170,12 @@ Returns: None
 '''
 def addSentimentColumn(data):
     classifier = SentimentIntensityAnalyzer()
+    sentiments=[]
+    for index, row in data.iterrows():
+        txt_value=data["text"].iloc[index]
+        result=findSentiment(classifier,txt_value)
+        sentiments.append(result)
+    data["sentiment"]=sentiments
     return
 
 
@@ -262,16 +329,16 @@ def scatterPlot(xValues, yValues, labels, title):
 
 # This code runs the test cases to check your work
 if __name__ == "__main__":
-    print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
-    test.week1Tests()
-    print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek1()
+    # print("\n" + "#"*15 + " WEEK 1 TESTS " +  "#" * 16 + "\n")
+    # test.week1Tests()
+    # print("\n" + "#"*15 + " WEEK 1 OUTPUT " + "#" * 15 + "\n")
+    # test.runWeek1()
 
     ## Uncomment these for Week 2 ##
-    """print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
+    print("\n" + "#"*15 + " WEEK 2 TESTS " +  "#" * 16 + "\n")
     test.week2Tests()
     print("\n" + "#"*15 + " WEEK 2 OUTPUT " + "#" * 15 + "\n")
-    test.runWeek2()"""
+    test.runWeek2()
 
     ## Uncomment these for Week 3 ##
     """print("\n" + "#"*15 + " WEEK 3 OUTPUT " + "#" * 15 + "\n")
