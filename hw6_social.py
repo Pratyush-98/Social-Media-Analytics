@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from typing import AnyStr
 from pandas.core.frame import DataFrame
 import hw6_social_tests as test
 
@@ -39,10 +40,10 @@ Returns: str
 def parseName(fromString):
     for i in fromString.split("\n"):
         fromto=i.find(" ")
-        str=fromString[fromto:]
-        bracket=str.find("(")
-        str=str[:bracket]
-    return str.strip()
+        ans=fromString[fromto:]
+        bracket=ans.find("(")
+        ans=ans[:bracket]
+    return ans.strip()
 
 
 '''
@@ -52,12 +53,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    str=""
+    ans=""
     for i in fromString.split():
         bracket=(i.find("("))
         if bracket==0:
-            str=i.replace("(","")
-    return str
+            ans=i.replace("(","")
+    return ans
 
 
 '''
@@ -67,13 +68,13 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    str=""
+    ans=""
     for i in fromString.split("\n"):
         fromto=i.find("from")
-        str=fromString[fromto:]
-        str=str.replace(")","")
-        str=str.replace("from ","")
-    return str
+        ans=fromString[fromto:]
+        ans=ans.replace(")","")
+        ans=ans.replace("from ","")
+    return ans
     
 
 
