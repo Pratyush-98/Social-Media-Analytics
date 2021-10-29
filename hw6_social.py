@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from pandas.core.frame import DataFrame
 import hw6_social_tests as test
 
 project = "Social" # don't edit this
@@ -25,7 +26,8 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    df=pd.read_csv(filename)
+    return df
 
 
 '''
@@ -35,7 +37,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    for i in fromString.split("\n"):
+        fromto=i.find(" ")
+        str=fromString[fromto:]
+        bracket=str.find("(")
+        str=str[:bracket]
+    return str.strip()
 
 
 '''
