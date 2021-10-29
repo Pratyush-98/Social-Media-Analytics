@@ -4,6 +4,7 @@ Name:
 Roll Number:
 """
 
+from pandas.core.frame import DataFrame
 import hw6_social_tests as test
 
 project = "Social" # don't edit this
@@ -25,7 +26,8 @@ Parameters: str
 Returns: dataframe
 '''
 def makeDataFrame(filename):
-    return
+    df=pd.read_csv(filename)
+    return df
 
 
 '''
@@ -35,7 +37,12 @@ Parameters: str
 Returns: str
 '''
 def parseName(fromString):
-    return
+    for i in fromString.split("\n"):
+        fromto=i.find(" ")
+        str=fromString[fromto:]
+        bracket=str.find("(")
+        str=str[:bracket]
+    return str.strip()
 
 
 '''
@@ -45,7 +52,12 @@ Parameters: str
 Returns: str
 '''
 def parsePosition(fromString):
-    return
+    str=""
+    for i in fromString.split():
+        bracket=(i.find("("))
+        if bracket==0:
+            str=i.replace("(","")
+    return str
 
 
 '''
@@ -55,7 +67,14 @@ Parameters: str
 Returns: str
 '''
 def parseState(fromString):
-    return
+    str=""
+    for i in fromString.split("\n"):
+        fromto=i.find("from")
+        str=fromString[fromto:]
+        str=str.replace(")","")
+        str=str.replace("from ","")
+    return str
+    
 
 
 '''
@@ -65,7 +84,20 @@ Parameters: str
 Returns: list of strs
 '''
 def findHashtags(message):
-    return
+    # endChars = [ " ", "\n", "#", ".", ",", "?", "!", ":", ";", ")" ]
+    lst=[]
+    k="" 
+    words=message.split("#") 
+    for i in words[1:len(words)]:
+        for j in i: 
+            if j not in endChars: 
+                k+=j 
+            else: 
+                break 
+        k='#'+k 
+        lst.append(k) 
+        k="" 
+    return lst
 
 
 '''
@@ -75,7 +107,8 @@ Parameters: dataframe ; str
 Returns: str
 '''
 def getRegionFromState(stateDf, state):
-    return
+    df=stateDf.loc[stateDf["state"]==state,"region"]
+    return df.values[0]
 
 
 '''
